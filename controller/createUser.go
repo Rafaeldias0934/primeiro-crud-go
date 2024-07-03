@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Rafaeldias0934/primeiro-crud-go.git/configuration/rest_err"
+	"github.com/Rafaeldias0934/primeiro-crud-go.git/configuration/validation"
 	"github.com/Rafaeldias0934/primeiro-crud-go.git/controller/model/request"
 	"github.com/Rafaeldias0934/primeiro-crud-go.git/controller/model/response"
 	"github.com/gin-gonic/gin"
@@ -18,7 +18,7 @@ func CreateUser(c *gin.Context) {
 
 	if err := c.ShouldBindJSON(&userRequest); err != nil {
 		log.Printf("Erro trying to marshal object, error =%s\n", err.Error())
-		errRest := rest_err.NewBadRequestError("Some fields are incorrect")
+		errRest := validation.ValidateUserError(err)
 
 		c.JSON(errRest.Code, errRest)
 		//c.JSON(errRest.Code, errRest)
