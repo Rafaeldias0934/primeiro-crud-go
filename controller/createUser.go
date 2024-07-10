@@ -1,23 +1,26 @@
 package controller
 
 import (
-	"fmt"
-	"log"
 	"net/http"
 
+	"github.com/Rafaeldias0934/primeiro-crud-go.git/configuration/logger"
 	"github.com/Rafaeldias0934/primeiro-crud-go.git/configuration/validation"
 	"github.com/Rafaeldias0934/primeiro-crud-go.git/controller/model/request"
 	"github.com/Rafaeldias0934/primeiro-crud-go.git/controller/model/response"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 func CreateUser(c *gin.Context) {
 
-	log.Println("Init CreatUser controller")
+	logger.Info("Init CreatUser controller",
+		zap.String("journey", "CreateUser"),
+	)
 	var userRequest request.UserRequest
 
 	if err := c.ShouldBindJSON(&userRequest); err != nil {
-		log.Printf("Erro trying to marshal object, error =%s\n", err.Error())
+		logger.Error("Error trying to validate user info", err,
+			zap.String("journey", "createUser"))
 		errRest := validation.ValidateUserError(err)
 
 		c.JSON(errRest.Code, errRest)
@@ -25,13 +28,14 @@ func CreateUser(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(userRequest)
 	response := response.UserResponse{
 		ID:    "test",
 		Email: userRequest.Email,
 		Name:  userRequest.Name,
 		Age:   userRequest.Age,
 	}
+	logger.Info("User created successfully",
+		zap.String("journey", "createUser"))
 
 	c.JSON(http.StatusOK, response)
 }
